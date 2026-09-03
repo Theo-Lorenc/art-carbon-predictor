@@ -29,6 +29,38 @@ CREATE TABLE IF NOT EXISTS project_snapshots (
 )
 """)
 
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS project_documents (
+
+    document_id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+    project_id TEXT,
+    document_name TEXT,
+    document_title TEXT,
+    document_type TEXT,
+    document_category TEXT,
+    upload_date TEXT,
+    download_url TEXT
+
+)
+""")
+
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS project_documents (
+
+    document_id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+    project_id TEXT,
+    document_name TEXT,
+    document_title TEXT,
+    document_type TEXT,
+    document_category TEXT,
+    upload_date TEXT,
+    download_url TEXT
+
+)
+""")
+
 conn.commit()
 
 print("Database structure created")
