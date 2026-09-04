@@ -2,35 +2,55 @@
 
 ## Overview
 
-The system collects project information from the ART Registry and stores it in SQLite.
+The ART Carbon Predictor collects project data from the ART Registry and stores it in a local SQLite database.
 
-The database acts as the historical source of truth used for reporting and future forecasting.
+The database functions as the project's source of truth.
+
+All reports and future forecasts are generated from the database rather than directly from API responses.
 
 ---
 
-# Data Flow
+# Current Data Flow
 
 ART Registry
-    ↓
+↓
 Project Summary API
-    ↓
+↓
 load_art_data.py
-    ↓
+↓
 projects
 project_snapshots
-    ↓
+↓
 Project Detail API
-    ↓
+↓
 load_project_details.py
-    ↓
+↓
 project_details
 project_documents
-    ↓
-Analytics Layer
-    ↓
+↓
+Stage Classification
+↓
 Forecast Engine
-    ↓
+↓
+Country Aggregation
+↓
 Excel Reports
+
+---
+
+# Registry Coverage
+
+Current Coverage:
+
+30 / 30 Projects
+
+Project summary pagination has been implemented using:
+
+offset
+pageNumber
+max
+
+The system now retrieves all available ART projects.
 
 ---
 
@@ -38,99 +58,124 @@ Excel Reports
 
 ## projects
 
-Stores relatively static project information.
+Stores project identity information.
 
-Purpose:
-
-Identify projects and associate them with countries.
-
-Example fields:
+Examples:
 
 - project_id
 - project_key
 - project_name
 - country
 - methodology
-- developer
+- jurisdiction
 
 ---
 
 ## project_snapshots
 
-Stores historical project states.
+Stores historical project state information.
 
-Purpose:
-
-Track how projects change over time.
-
-Example fields:
+Examples:
 
 - snapshot_date
 - project_status
 - issued_credits
 - last_status_changed
 
-A new snapshot should be created every collection cycle.
+Purpose:
 
-Historical snapshots should never be overwritten.
+Track project changes over time.
 
 ---
 
 ## project_details
 
-Stores metadata retrieved from the project detail API.
+Stores project-level metadata.
+
+Examples:
+
+- project_creation_date
+- project_start_date
+- coverage_area
+- crediting_period
+- listing_status
 
 Purpose:
 
-Provide additional context used for forecasting.
-
-Example fields:
-
-- project_listing_status
-- project_creation_date
-- project_start_date
-- crediting_period_dates
+Store variables useful for future forecasting.
 
 ---
 
 ## project_documents
 
-Stores project document history.
+Stores document metadata.
+
+Examples:
+
+- document_type
+- document_title
+- upload_date
+- download_url
 
 Purpose:
 
-Track project maturity and progression.
+Track project progression through documentation.
+
+---
+
+# Future Tables
+
+## project_stages
+
+Purpose:
+
+Assign projects to observed lifecycle stages.
 
 Example fields:
 
-- document_name
-- document_type
-- document_category
-- upload_date
+- project_id
+- stage
+- stage_score
+- stage_date
+- days_since_stage
 
-This is expected to become one of the most important forecasting datasets.
+---
+
+## project_forecasts
+
+Purpose:
+
+Store project forecasts.
+
+Example fields:
+
+- project_id
+- predicted_issuance_date
+- predicted_credit_volume
+- confidence_score
+
+---
+
+## country_forecasts
+
+Purpose:
+
+Store country forecast outputs.
+
+Example fields:
+
+- country
+- predicted_increase
+- predicted_date
+- confidence_score
 
 ---
 
 # Current Scripts
 
-## create_database.py
-
-Purpose:
-
-Create all required SQLite tables.
-
-Output:
-
-carbon.db
-
----
-
 ## load_art_data.py
 
-Purpose:
-
-Import summary project data.
+Downloads project summaries.
 
 Updates:
 
@@ -141,9 +186,7 @@ Updates:
 
 ## load_project_details.py
 
-Purpose:
-
-Import detailed project metadata and documents.
+Downloads project details and document metadata.
 
 Updates:
 
@@ -152,89 +195,76 @@ Updates:
 
 ---
 
-## verify_projects.py
-
-Purpose:
-
-Verify data loaded into projects table.
-
----
-
-## verify_project_details.py
-
-Purpose:
-
-Verify data loaded into project_details table.
-
----
-
 ## document_summary.py
 
-Purpose:
-
-Summarise document types across all projects.
-
-Used to identify maturity indicators.
+Analyses document categories.
 
 ---
 
 ## document_counts.py
 
-Purpose:
-
-Calculate document counts per project.
-
-Used as an early project progression metric.
+Calculates document counts.
 
 ---
 
-## country_summary.py
+## issued_vs_not_issued.py
 
-Purpose:
-
-Generate country-level reporting.
-
-Output:
-
-Country_Summary.xlsx
+Compares issued and non-issued projects.
 
 ---
 
-## project_detail.py
+## project_document_matrix.py
 
-Purpose:
-
-Generate project-level reporting.
-
-Output:
-
-Project_Detail.xlsx
+Maps document types by project.
 
 ---
 
-# Future Components
+## project_document_timeline.py
 
-## Pagination Engine
-
-Purpose:
-
-Ensure all registry projects are collected.
-
-Success Criteria:
-
-Database project count equals registry project count.
+Analyses document chronology.
 
 ---
 
-## Project Progress Engine
+## issued_project_documents.py
+
+Analyses document history for projects that have already issued credits.
+
+---
+
+# Next Development Phase
+
+## Stage Classification Engine
 
 Purpose:
 
-Calculate project maturity scores.
+Identify project lifecycle stages from document evidence.
 
-Output:
+Potential stages:
 
-Project_Progress.xlsx
+- Concept
+- Registration
+- Validation
+- Verification
+- Monitoring
+- Issued
+- Cancelled
+
+---
+
+## PDF Intelligence Engine
+
+Purpose:
+
+Download and extract information from project documents.
+
+Potential outputs:
+
+- Validation dates
+- Verification dates
+- Monitoring dates
+- Carbon estimates
+- Forest metrics
+- Expected reductions
 
 ---
 
@@ -244,36 +274,35 @@ Purpose:
 
 Generate:
 
-- Predicted Issuance Date
-- Predicted Credit Volume
-- Confidence Score
-
-Output:
-
-Project_Forecast.xlsx
+- Project progression forecasts
+- Issuance date forecasts
+- Credit volume forecasts
 
 ---
 
-## Country Forecast Engine
+## Country Aggregation Engine
 
 Purpose:
 
-Aggregate project forecasts into country-level predictions.
+Aggregate project forecasts into country forecasts.
 
-Output:
+Outputs:
 
-Country_Forecast.xlsx
+- Predicted credit increases
+- Predicted increase dates
+- Confidence scores
 
 ---
 
-# Extension Guidelines
+# Extension Rules
 
-When adding new data sources:
+When adding new functionality:
 
-1. Create a dedicated collection script.
-2. Store raw data in SQLite.
-3. Avoid overwriting historical records.
-4. Build reports from database tables rather than directly from APIs.
-5. Ensure project forecasts remain the foundation of country forecasts.
+1. Store raw information first.
+2. Preserve historical records.
+3. Avoid direct API-to-report workflows.
+4. Generate analytics from database tables.
+5. Generate country forecasts from project forecasts.
+6. Validate forecasting variables before using them in production models.
 
-This keeps forecasting logic reproducible and auditable.
+This ensures the forecasting process remains transparent, reproducible and auditable.

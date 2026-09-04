@@ -11,19 +11,74 @@ print("Connected to database")
 
 # Load ART JSON
 
-with open(
-    "data/art_projects.json",
-    "r",
-    encoding="utf-8"
-) as file:
+import requests
 
-    data = json.load(file)
+url = (
+    "https://greentrace.ice.com"
+    "/api/greentraceservice/v1/project/"
+    "registry/ART_REGISTRY/project-summaries/results"
+)
 
-projects = data["datasets"]["projects"]["rows"]
+all_projects = []
 
-print(f"Projects Found: {len(projects)}")
+offset = 0
+page_number = 1
+max_results = 20
+
+while True:
+
+    payload = {
+        "offset": offset,
+        "pageNumber": page_number,
+        "developer": "",
+        "projectType": "",
+        "max": max_results
+    }
+
+    response = requests.post(
+        url,
+        data=payload
+    )
+
+    data = response.json()
+
+    projects = (
+        data["datasets"]
+        ["projects"]
+        ["rows"]
+    )
+
+    print(
+        f"Page {page_number}: "
+        f"{len(projects)} projects"
+    )
+
+    if len(projects) == 0:
+        break
+
+    all_projects.extend(projects)
+
+    if len(projects) < max_results:
+        break
+
+    offset += max_results
+    page_number += 1
+
+print(
+    f"Total Projects Found: "
+    f"{len(all_projects)}"
+)
+
+projects = all_projects
+
+# print(f"Projects Found: {len(projects)}")
 
 # Load Projects Table
+
+print(
+
+    f"Projects being inserted: {len(projects)}"
+)
 
 for project in projects:
 

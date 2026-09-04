@@ -1,169 +1,165 @@
-# ART Carbon Predictor - Forecasting Methodology
+# ART Carbon Predictor - Methodology
 
 ## Purpose
 
-The ART Carbon Predictor is designed to estimate future carbon credit issuance activity within the ART Registry.
+The ART Carbon Predictor is designed to forecast future carbon credit issuance activity within the ART Registry.
 
-The system attempts to answer:
+The system attempts to answer three distinct questions:
 
-- Which projects are most likely to issue credits next?
-- When are credits likely to be issued?
-- How many credits are likely to be issued?
-- Which countries are expected to receive future credit increases?
-- When are those increases expected to occur?
+1. What stage is a project currently in?
+2. When is a project likely to issue credits?
+3. How many credits is a project likely to issue?
 
-Forecasts are generated at the project level and then aggregated to create country-level forecasts.
+Project forecasts are generated first and country forecasts are derived from aggregated project forecasts.
 
 ---
 
 # Forecasting Philosophy
 
-Projects issue credits.
+The project does not attempt to predict credit issuance directly.
 
-Countries do not directly issue credits.
+Instead the system attempts to understand and model the ART project progression process.
 
-For this reason, all forecasting is performed at the project level first.
+The central hypothesis is that projects move through a series of observable milestones prior to issuing credits.
 
-Country forecasts are derived from aggregated project forecasts.
-
-Example:
-
-Project Forecasts
-
-Acre:
-- Predicted Credits: 400,000
-- Predicted Date: 2027-Q2
-
-Para:
-- Predicted Credits: 850,000
-- Predicted Date: 2027-Q3
-
-Country Forecast
-
-Brazil:
-- Predicted Increase: 1,250,000
-- Predicted Increase Date: 2027-Q2
+By measuring project progression through those milestones, the system can estimate the likelihood and timing of future issuance events.
 
 ---
 
-# Current Forecasting Hypothesis
+# Current Research Findings
 
-Current investigation suggests project maturity is reflected more strongly by document activity than by project status.
+## Project Status Is A Weak Signal
 
-Many projects share the status:
+Many projects share the same registry status:
 
 ACTIVE
 
-making status alone unsuitable for forecasting.
+As a result, project status alone provides limited forecasting value.
 
-Document growth and document types may provide stronger signals.
+---
 
-Examples:
+## Document Activity Is A Strong Signal
+
+Projects contain different document types and document histories.
+
+Analysis suggests that documents represent steps within the project lifecycle.
+
+Document content appears to be more informative than project status.
+
+---
+
+# Multiple Project Pathways
+
+Current evidence suggests that projects may follow different issuance pathways.
+
+## TREES Pathway
+
+Observed documents include:
 
 - TREES Concept
 - TREES Registration Document
 - TREES Monitoring Report
-- FCPF Supporting Documents
-- CATS Cancellation Certificate
 
-Projects with larger and more diverse document histories appear to be more mature than projects with minimal documentation.
+Examples:
+
+- Acre
+- Para
+- Bhutan
 
 ---
 
-# Future Project Progress Score
+## FCPF Pathway
 
-Future forecasts will be built using a weighted scoring model.
+Observed documents include:
 
-Candidate inputs include:
+- ERPD
+- Validation Report
+- Verification Report
+- Monitoring Report
 
-## Document Progression
+Examples:
 
-Measures:
+- Costa Rica
+- Côte d'Ivoire
 
-- Document count
-- Document type diversity
+---
+
+## Post-Issuance Pathway
+
+Observed documents include:
+
+- CATS Cancellation Certificates
+
+Example:
+
+- Mai-Ndombe
+
+These documents indicate credits have already been issued and subsequently retired or cancelled.
+
+---
+
+# Project Lifecycle Hypothesis
+
+The current working hypothesis is:
+
+TREES Concept
+↓
+Registration
+↓
+Validation
+↓
+Verification
+↓
+Monitoring
+↓
+Issuance
+↓
+Cancellation
+
+This sequence is not yet fully proven and will be refined through continued document analysis.
+
+---
+
+# Forecast Models
+
+The project will ultimately contain three separate forecasting models.
+
+## Model 1: Project Progression
+
+Purpose:
+
+Determine current project maturity.
+
+Inputs:
+
+- Document types
 - Document chronology
+- Status history
+- Project age
 
-## Project Age
+Output:
 
-Calculated as:
-
-Current Date - Project Creation Date
-
-## Crediting Period Progress
-
-Calculated as:
-
-Elapsed Crediting Period / Total Crediting Period
-
-## Status Change Activity
-
-Calculated as:
-
-Current Date - Last Status Change
-
-## Historical Issuance Behaviour
-
-Projects will eventually be compared against historical issuance patterns from completed projects.
+- Current stage
+- Stage score
+- Next likely milestone
 
 ---
 
-# Forecast Outputs
+## Model 2: Issuance Timing
 
-## Project Forecast
+Purpose:
 
-Fields:
+Estimate when credits are likely to be issued.
 
-- Forecast Score
-- Predicted Issuance Date
-- Predicted Credit Volume
-- Confidence Score
+Inputs:
 
-Example:
+- Current stage
+- Days since latest milestone
+- Project pathway
+- Country factors
+- Historical milestone durations
 
-| Project | Score | Predicted Date | Predicted Credits |
-|----------|----------|----------|----------|
-| Acre | 82 | 2027-Q3 | 450,000 |
+Output:
 
-## Country Forecast
-
-Fields:
-
-- Current Credits
-- Predicted Increase
-- Predicted Increase Date
-- Confidence Score
-
-Example:
-
-| Country | Current Credits | Predicted Increase | Predicted Date |
-|----------|----------|----------|----------|
-| BR | 0 | 1,250,000 | 2027-Q2 |
-
-The Predicted Increase Date represents the earliest forecasted issuance event among projects in that country.
-
----
-
-# Forecast Quality Requirements
-
-Before forecasts are considered production-ready:
-
-Projects Loaded
-=
-Projects Available In Registry
-
-Forecasting on a partial dataset introduces bias and reduces confidence.
-
-Full registry coverage is required before forecast outputs are trusted.
-
----
-
-# Long-Term Goal
-
-The long-term objective is to provide evidence-based forecasts of:
-
-- Future issuance dates
-- Future credit volumes
-- Country-level credit increases
-
-before the issuance events occur.
+- Predicted issuance date
+- Confidence
