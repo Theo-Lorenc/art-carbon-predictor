@@ -35,28 +35,43 @@ CREATE TABLE IF NOT EXISTS project_documents (
     document_id INTEGER PRIMARY KEY AUTOINCREMENT,
 
     project_id TEXT,
+
     document_name TEXT,
     document_title TEXT,
+
     document_type TEXT,
     document_category TEXT,
-    upload_date TEXT,
-    download_url TEXT
 
+    upload_date TEXT,
+
+    download_url TEXT,
+
+    UNIQUE(
+        project_id,
+        document_name
+    )
 )
 """)
 
+
 cursor.execute("""
-CREATE TABLE IF NOT EXISTS project_documents (
+CREATE TABLE IF NOT EXISTS project_details (
 
-    document_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    project_id TEXT PRIMARY KEY,
 
-    project_id TEXT,
-    document_name TEXT,
-    document_title TEXT,
-    document_type TEXT,
-    document_category TEXT,
-    upload_date TEXT,
-    download_url TEXT
+    project_listing_status TEXT,
+
+    project_creation_date TEXT,
+
+    project_start_date TEXT,
+
+    current_crediting_period_start TEXT,
+
+    current_crediting_period_end TEXT,
+
+    project_holdings_total_quantity REAL,
+
+    updated_at TEXT
 
 )
 """)
