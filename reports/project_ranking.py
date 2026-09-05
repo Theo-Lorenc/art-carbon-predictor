@@ -21,14 +21,21 @@ df = pd.read_sql(query, conn)
 
 df["last_status_changed"] = pd.to_datetime(
     df["last_status_changed"],
-    errors="coerce"
+    errors="coerce",
+    utc=True
 )
 
-today = pd.Timestamp.today()
+today = pd.Timestamp.now(tz="UTC")
 
 df["days_since_status_change"] = (
     today - df["last_status_changed"]
 ).dt.days
+
+# Excel compatibility
+df["last_status_changed"] = (
+    df["last_status_changed"]
+    .dt.tz_localize(None)
+)
 
 df = df.sort_values(
     "days_since_status_change"

@@ -1,4 +1,5 @@
 import sqlite3
+from turtle import pd
 
 conn = sqlite3.connect("database/carbon.db")
 
@@ -74,6 +75,57 @@ CREATE TABLE IF NOT EXISTS project_details (
     updated_at TEXT
 
 )
+""")
+
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS project_pdf_insights (
+
+    project_id TEXT,
+
+    document_name TEXT,
+
+    report_type TEXT,
+
+    reporting_period_start TEXT,
+    reporting_period_end TEXT,
+
+    verification_date TEXT,
+
+    accounting_area_ha REAL,
+
+    emission_reductions REAL,
+
+    issued_credits REAL,
+
+    verification_team_size INTEGER,
+
+    major_corrective_actions INTEGER,
+    minor_corrective_actions INTEGER,
+
+    observations INTEGER
+)
+""")
+
+cursor.execute("""
+
+CREATE TABLE IF NOT EXISTS project_forecasts (
+
+    project_id TEXT,
+
+    forecast_event INTEGER,
+
+    predicted_issue_date TEXT,
+
+    predicted_credits REAL,
+
+    confidence REAL,
+
+    model_version TEXT,
+
+    generated_at TEXT
+
+)
+
 """)
 
 conn.commit()
